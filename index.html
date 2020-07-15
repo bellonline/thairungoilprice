@@ -1,92 +1,167 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Sheets Blog</title>
-</head>
-<body>
-    <div class="title">Product Inventory</div>
-        <table class="inventory-list">
-            <tr class="inventory-header">
-                <th class="id-column">ID</th>
-                <th class="price-column">Price</th>
-                <th class="name-column">Name</th>
-                <th class="quantity-column">Quantity</th>
-                <th class="value-column">Value</th>
-            </tr>
-        </table>
-        <div class="total-text">Inventory Value: <span id="total"></span></div>
-
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-    <script>
-        $(document).ready( function () {
-            getCurrentInvetory();
-        });
-
-        function getCurrentInvetory(){
-            var spreadsheetID = "1Esc3TyZVh7IWuueYDqLT85MNOEt_q3VhpkDPP_LhaXs";
-            var url = "https://spreadsheets.google.com/feeds/list/" + spreadsheetID + "/od6/public/values?alt=json";
-            console.log(url);
-            $.getJSON(url, function(data) {
-                var entry = data.feed.entry;
-                var length = entry.length;
-                $(".inventory-item").remove();
-
-                $(entry).each(function(index, element){
-
-                    if (index === (length - 1)) {
-                        $('#total').text(this.gsx$value.$t);
-                    }else{
-                        var inventoryItem = $('<tr class="inventory-item">').appendTo('.inventory-list');
-                        inventoryItem.append(
-                            $(document.createElement('td')).text(this.gsx$id.$t).addClass('product-id')
-                        );
-                        inventoryItem.append(
-                            $(document.createElement('td')).text(this.gsx$price.$t).addClass('product-price')
-                        );
-                        inventoryItem.append(
-                            $(document.createElement('td')).text(this.gsx$name.$t).addClass('product-name')
-                        );
-                        inventoryItem.append(
-                            $(document.createElement('td')).text(this.gsx$quantity.$t).addClass('product-quantity')
-                        );
-                        inventoryItem.append(
-                            $(document.createElement('td')).text(this.gsx$value.$t).addClass('product-value')
-                        );
-                    }
-                });
-            });
-            setTimeout(getCurrentInvetory, 300);
-        } 
-    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.1.0/papaparse.min.js'></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+        crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
     <style>
-        .title{
-            text-align: center;
-            margin: 2rem;
-            font-size: 2rem;
+        row {
+            margin-top: 20px;
         }
-        .inventory-list{
-            margin: auto;
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 5px;
         }
         th{
-            text-align: left;
-        }
-        td, th{
-            padding-right: 3rem;
-        }
-        .product-id, .product-quantity{
             text-align: center;
         }
-        .product-price, .product-value, .price-column, .value-column{
+        td {
+            padding: 3px;
+        }
+
+        .oilname {
             text-align: right;
+            font-weight: 600;
         }
-        .total-text{
-            margin-top: 2rem;
+
+        .price {
             text-align: center;
-            font-size: 1.5rem;
+        }
+        .brandlogo{
+            width: 30px;
+            height: auto;
+        }
+        h2 {
+            text-align: center;
         }
     </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-xs-12">
+                <h2>ราคาน้ำมันประจำวันที่
+                    <span id="date"></span>
+                </h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <td>&nbsp;</td>
+                            <th>
+                                <img src="https://xn--42cah7d0cxcvbbb9x.com/wp-content/uploads/2018/06/น้ำมันปตท.png" class="brandlogo" alt="ราคาน้ํามันปตท" />
+                                <br />ปตท.
+                            </th>
+                            <th>
+                                <img src="https://xn--42cah7d0cxcvbbb9x.com/wp-content/uploads/2018/06/น้ำมันบางจาก.png" class="brandlogo" alt="ราคาน้ํามันบางจาก" />
+                                <br />บางจาก</th>
+                            <th>
+                                <img src="https://xn--42cah7d0cxcvbbb9x.com/wp-content/uploads/2018/06/น้ำมัน-shell.png" class="brandlogo" alt="ราคาน้ํามันเชล์ Shell" />
+                                <br />เชลล์</th>
+                            <th>
+                                <img src="https://xn--42cah7d0cxcvbbb9x.com/wp-content/uploads/2018/06/น้ำมัน-esso.png" class="brandlogo" alt="ราคาน้ํามันเอสโซ่ Esso" />
+                                <br />เอสโซ่</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="oilname">ดีเซล</td>
+                            <td class="price" id="pttd"></td>
+                            <td class="price" id="bjd"></td>
+                            <td class="price" id="shd"></td>
+                            <td class="price" id="esd"></td>
+                        </tr>
+                        <tr>
+                            <td class="oilname">ดีเซล B10</td>
+                            <td class="price" id="pttdb10"></td>
+                            <td class="price" id="bjdb10"></td>
+                            <td class="price" id="shdb10"></td>
+                            <td class="price" id="esdb10"></td>
+                        </tr>
+                        <tr>
+                            <td class="oilname">เบนซิน</td>
+                            <td class="price" id="pttben">&nbsp;</td>
+                            <td class="price" id="bjben"></td>
+                            <td class="price" id="shben"></td>
+                            <td class="price" id="esben"></td>
+                        </tr>
+                        <tr>
+                            <td class="oilname">แก๊สโซฮอล์ 91</td>
+                            <td class="price" id="pttsh91"></td>
+                            <td class="price" id="bjsh91"></td>
+                            <td class="price" id="shsh91"></td>
+                            <td class="price" id="essh91"></td>
+                        </tr>
+                        <tr>
+                            <td class="oilname">แก๊สโซฮอล์ 95</td>
+                            <td class="price" id="pttsh95"></td>
+                            <td class="price" id="bjsh95"></td>
+                            <td class="price" id="shsh95"></td>
+                            <td class="price" id="essh95"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-6 col-xs-12">
+                <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSf-8KOB82SlFF6p8A3wptZa-G6RJqM697uKblYMvUzXUlnqdQ/viewform?embedded=true" width="100%" height="1600" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        var public_spreadsheet_url =
+            'https://docs.google.com/spreadsheets/d/e/2PACX-1vQDTbOPoZ3jkR4GQ0muYoMgd4vUCObTUTpi8nf3yfFfaDBy_h6zHrP41U-4CyzZM0XUiwGFZeNDzASY/pub?output=csv';
+
+        function init() {
+            Papa.parse(public_spreadsheet_url, {
+                download: true,
+                header: true,
+                complete: showInfo
+            })
+        }
+
+        window.addEventListener('DOMContentLoaded', init)
+
+        function showInfo(results) {
+            var data = results.data
+
+            // data comes through as a simple array since simpleSheet is turned on
+            document.getElementById("date").innerHTML = data[0].date
+            document.getElementById("pttd").innerHTML = data[0].pttd
+            document.getElementById("pttdb10").innerHTML = data[0].pttdb10
+            document.getElementById("pttben").innerHTML = data[0].pttben
+            document.getElementById("pttsh91").innerHTML = data[0].pttsh91
+            document.getElementById("pttsh95").innerHTML = data[0].pttsh95
+            document.getElementById("bjd").innerHTML = data[0].bjd
+            document.getElementById("bjdb10").innerHTML = data[0].bjdb10
+            document.getElementById("bjben").innerHTML = data[0].bjben
+            document.getElementById("bjsh91").innerHTML = data[0].bjsh91
+            document.getElementById("bjsh95").innerHTML = data[0].bjsh95
+            document.getElementById("shd").innerHTML = data[0].shd
+            document.getElementById("shdb10").innerHTML = data[0].shdb10
+            document.getElementById("shben").innerHTML = data[0].shben
+            document.getElementById("shsh91").innerHTML = data[0].shsh91
+            document.getElementById("shsh95").innerHTML = data[0].shsh95
+            document.getElementById("esd").innerHTML = data[0].esd
+            document.getElementById("esdb10").innerHTML = data[0].esdb10
+            document.getElementById("esben").innerHTML = data[0].esben
+            document.getElementById("essh91").innerHTML = data[0].essh91
+            document.getElementById("essh95").innerHTML = data[0].essh95
+            console.log(data);
+        }
+    </script>
 </body>
+
 </html>

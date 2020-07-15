@@ -1,0 +1,93 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Sheets Blog</title>
+</head>
+<body>
+    <div class="title">Product Inventory</div>
+        <table class="inventory-list">
+            <tr class="inventory-header">
+                <th class="id-column">ID</th>
+                <th class="price-column">Price</th>
+                <th class="name-column">Name</th>
+                <th class="quantity-column">Quantity</th>
+                <th class="value-column">Value</th>
+            </tr>
+        </table>
+        <div class="total-text">Inventory Value: <span id="total"></span></div>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script>
+        $(document).ready( function () {
+            getCurrentInvetory();
+        });
+
+        function getCurrentInvetory(){
+            var spreadsheetID = "1Esc3T17i4-KiwZQiYiIHUl6mb0pkV9FnQNFnqr4HM-
+
+4vt9MP4          var url = "https://spreadsheets.google.com/feeds/list/" + spreadsheetID + "/od6/public/values?alt=json";
+            console.log(url);
+            $.getJSON(url, function(data) {
+                var entry = data.feed.entry;
+                var length = entry.length;
+                $(".inventory-item").remove();
+
+                $(entry).each(function(index, element){
+
+                    if (index === (length - 1)) {
+                        $('#total').text(this.gsx$value.$t);
+                    }else{
+                        var inventoryItem = $('<tr class="inventory-item">').appendTo('.inventory-list');
+                        inventoryItem.append(
+                            $(document.createElement('td')).text(this.gsx$id.$t).addClass('product-id')
+                        );
+                        inventoryItem.append(
+                            $(document.createElement('td')).text(this.gsx$price.$t).addClass('product-price')
+                        );
+                        inventoryItem.append(
+                            $(document.createElement('td')).text(this.gsx$name.$t).addClass('product-name')
+                        );
+                        inventoryItem.append(
+                            $(document.createElement('td')).text(this.gsx$quantity.$t).addClass('product-quantity')
+                        );
+                        inventoryItem.append(
+                            $(document.createElement('td')).text(this.gsx$value.$t).addClass('product-value')
+                        );
+                    }
+                });
+            });
+            setTimeout(getCurrentInvetory, 300);
+        } 
+    </script>
+    <style>
+        .title{
+            text-align: center;
+            margin: 2rem;
+            font-size: 2rem;
+        }
+        .inventory-list{
+            margin: auto;
+        }
+        th{
+            text-align: left;
+        }
+        td, th{
+            padding-right: 3rem;
+        }
+        .product-id, .product-quantity{
+            text-align: center;
+        }
+        .product-price, .product-value, .price-column, .value-column{
+            text-align: right;
+        }
+        .total-text{
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 1.5rem;
+        }
+    </style>
+</body>
+</html>
